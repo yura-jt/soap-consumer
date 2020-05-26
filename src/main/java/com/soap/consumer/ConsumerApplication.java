@@ -1,10 +1,11 @@
 package com.soap.consumer;
 
 import com.soap.consumer.client.StudentClient;
-import com.soap.consumer.config.SoapClientConfiguration;
+import com.soap.consuming.wsdl.GetStudentResponse;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class ConsumerApplication {
@@ -12,10 +13,19 @@ public class ConsumerApplication {
 
         SpringApplication.run(ConsumerApplication.class, args);
 
-        AnnotationConfigApplicationContext annotationConfigApplicationContext =
-                new AnnotationConfigApplicationContext(SoapClientConfiguration.class);
-        StudentClient studentClient = annotationConfigApplicationContext.getBean(StudentClient.class);
-        System.out.println(studentClient.getStudent(1L).getStudent().getFirstName());
+    }
+
+    @Bean
+    CommandLineRunner lookup(StudentClient client) {
+        return args -> {
+            Long id = 1L;
+
+            if (args.length > 0) {
+                id = Long.parseLong(args[0]);
+            }
+            GetStudentResponse response = client.getStudent(id);
+            System.err.println(response.getStudent().getFirstName());
+        };
     }
 
 }
