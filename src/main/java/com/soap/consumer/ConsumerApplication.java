@@ -1,7 +1,9 @@
 package com.soap.consumer;
 
 import com.soap.consumer.client.StudentClient;
+import com.soap.consuming.wsdl.AddStudentResponse;
 import com.soap.consuming.wsdl.GetStudentResponse;
+import com.soap.consuming.wsdl.StudentSoapDto;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,6 +26,21 @@ public class ConsumerApplication {
                 id = Long.parseLong(args[0]);
             }
             GetStudentResponse response = client.getStudent(id);
+            System.err.println(response.getStudent().getFirstName());
+        };
+    }
+
+    @Bean
+    CommandLineRunner save(StudentClient client) {
+        return args -> {
+            StudentSoapDto newStudent = new StudentSoapDto();
+            newStudent.setFirstName("John");
+            newStudent.setLastName("Snow");
+            newStudent.setEmail("john.snow@gma1l.com");
+            newStudent.setAge(22);
+            newStudent.setGroupNumber(5);
+
+            AddStudentResponse response = client.addStudent(newStudent);
             System.err.println(response.getStudent().getFirstName());
         };
     }
